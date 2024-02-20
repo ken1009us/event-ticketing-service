@@ -12,9 +12,9 @@ router = APIRouter()
 
 
 @router.get("/reservations/", response_model=List[Reservation])
-def list_all_reservations():
-    reservations, message = get_all_reservations()
-    if reservations is None:
+async def list_all_reservations():
+    reservations, message = await get_all_reservations()
+    if not reservations:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=message)
     return reservations
 
@@ -22,26 +22,28 @@ def list_all_reservations():
 @router.post(
     "/reservations/", response_model=Reservation, status_code=status.HTTP_201_CREATED
 )
-def create_reservation_endpoint(reservation: Reservation):
-    reservation, message = create_reservation(reservation)
+async def create_reservation_endpoint(reservation: Reservation):
+    reservation, message = await create_reservation(reservation)
     if not reservation:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=message)
     return {"message": message, "reservation": reservation}
 
 
 @router.put("/reservations/{reservation_id}", response_model=Reservation)
-def update_reservation_endpoint(
+async def update_reservation_endpoint(
     reservation_id: int, user_id: int, tickets_reserved: int
 ):
-    reservation, message = update_reservation(reservation_id, user_id, tickets_reserved)
+    reservation, message = await update_reservation(
+        reservation_id, user_id, tickets_reserved
+    )
     if not reservation:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=message)
     return reservation
 
 
 @router.delete("/reservations/{reservation_id}")
-def cancel_reservation_endpoint(reservation_id: int):
-    success, message = cancel_reservation(reservation_id)
+async def cancel_reservation_endpoint(reservation_id: int):
+    success, message = await cancel_reservation(reservation_id)
     if not success:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=message)
     return {"message": message}
