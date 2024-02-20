@@ -36,9 +36,11 @@ This project is an event ticketing service built with FastAPI and MySQL. It allo
 ## Technologies
 
 - FastAPI
+- MySQL
 - Pydantic
 - SQLAlchemy
-- Docker & Docker Compose
+- Sqlmodel
+- Docker
 
 ## Getting Started
 
@@ -87,6 +89,8 @@ MYSQL_USER={MYSQL_USER}
 MYSQL_PASSWORD={MYSQL_PASSWORD}
 ```
 
+### Start the service
+
 Run docker-compose
 
 ```bash
@@ -100,16 +104,18 @@ INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 ...
-INFO:     127.0.0.1:52532 - "GET /events/ HTTP/1.1" 200 OK
+INFO:     XXX.X.X.X:XXXX - "GET /events/ HTTP/1.1" 200 OK
 ```
 
 ## Usage
 
-You can see the documentation via OpenAPI: `http://0.0.0.0:8000/docs#` and use curl or Postman to test the API.
+### Option 1
+
+You can see the documentation via OpenAPI: `http://0.0.0.0:8000/docs#` and use Curl or Postman to test the API.
 
 Something we can do......
 
-### View Events
+#### View Events
 
 ```bash
 $ curl -X 'GET' \
@@ -117,7 +123,7 @@ $ curl -X 'GET' \
   -H 'accept: application/json'
 ```
 
-### Add a User
+#### Add a User
 
 ```bash
 $ curl -X 'POST' \
@@ -129,7 +135,7 @@ $ curl -X 'POST' \
 }'
 ```
 
-### Make a Reservation
+#### Make a Reservation
 
 ```bash
 $ curl -X 'POST' \
@@ -143,7 +149,7 @@ $ curl -X 'POST' \
 }'
 ```
 
-### Update a Reservation
+#### Update a Reservation
 
 ```bash
 $ curl -X 'PUT' \
@@ -151,15 +157,17 @@ $ curl -X 'PUT' \
   -H 'accept: application/json'
 ```
 
+### Option 2
+
 I also create a user-friendly, pretty format interface for the users to test the API.
 
-### Run Client file
+#### Run Client file
 
 ```bash
 python cli.py
 ```
 
-Then it will pop out an interface for you:
+Then it will pop out an command line interface for you:
 
 ```bash
 --- Event Ticketing CLI ---
