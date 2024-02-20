@@ -1,27 +1,31 @@
 from typing import List
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, status
 from ..models.reservation import Reservation
 from ..services.booking_service import (
     create_reservation,
     update_reservation,
     cancel_reservation,
-    get_reservations_by_user,
+    get_all_reservations,
 )
 
 router = APIRouter()
 
 
-@router.get("/users/{user_id}/reservations", response_model=List[Reservation])
-def get_user_reservations(user_id: int):
-    reservations = get_reservations_by_user(user_id)
+@router.get("/reservations/", response_model=List[Reservation])
+def list_all_reservations():
+    reservations, message = get_all_reservations()
+    if reservations is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=message)
     return reservations
 
 
-@router.post("/reservations/", response_model=Reservation)
+@router.post(
+    "/reservations/", response_model=Reservation, status_code=status.HTTP_201_CREATED
+)
 def create_reservation_endpoint(reservation: Reservation):
     reservation, message = create_reservation(reservation)
     if not reservation:
-        raise HTTPException(status_code=400, detail=message)
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=message)
     return {"message": message, "reservation": reservation}
 
 
@@ -31,7 +35,7 @@ def update_reservation_endpoint(
 ):
     reservation, message = update_reservation(reservation_id, user_id, tickets_reserved)
     if not reservation:
-        raise HTTPException(status_code=400, detail=message)
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=message)
     return reservation
 
 
@@ -39,5 +43,5 @@ def update_reservation_endpoint(
 def cancel_reservation_endpoint(reservation_id: int):
     success, message = cancel_reservation(reservation_id)
     if not success:
-        raise HTTPException(status_code=404, detail=message)
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=message)
     return {"message": message}
