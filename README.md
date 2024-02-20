@@ -1,5 +1,28 @@
 # Event Ticketing Service
 
+```bash
+    ______                 __     _______      __        __  _                _____                 _
+   / ____/   _____  ____  / /_   /_  __(_)____/ /_____  / /_(_)___  ____ _   / ___/___  ______   __(_)_______
+  / __/ | | / / _ \/ __ \/ __/    / / / / ___/ //_/ _ \/ __/ / __ \/ __ `/   \__ \/ _ \/ ___/ | / / / ___/ _ \
+ / /___ | |/ /  __/ / / / /_     / / / / /__/ ,< /  __/ /_/ / / / / /_/ /   ___/ /  __/ /   | |/ / / /__/  __/
+/_____/ |___/\___/_/ /_/\__/    /_/ /_/\___/_/|_|\___/\__/_/_/ /_/\__, /   /____/\___/_/    |___/_/\___/\___/
+                                                                 /____/
+
+
+--- Event Ticketing CLI ---
+1: List Events
+2: Create Event
+3: List Users
+4: Create User
+5: Create Reservation
+6: Update Reservation
+7: Delete Reservation
+8: Get User Reservations
+9: Lookup Reservation
+10: Exit
+Enter choice:
+```
+
 This project is an event ticketing service built with FastAPI and MySQL. It allows users to view events, make reservations for tickets, and manage their reservations.
 
 ## Features
@@ -55,7 +78,7 @@ MYSQL_USER={MYSQL_USER}
 MYSQL_PASSWORD={MYSQL_PASSWORD}
 ```
 
-Comment out below if you want to run local: uvicorn app.main:app --reload
+Comment out below if you just want to run local: uvicorn app.main:app --reload
 
 ```bash
 MYSQL_ROOT_PASSWORD={MYSQL_ROOT_PASSWORD}
@@ -71,6 +94,14 @@ docker-compose up --build
 ```
 
 The application should now be running at `http://0.0.0.0:8000`.
+
+```bash
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+...
+INFO:     127.0.0.1:52532 - "GET /events/ HTTP/1.1" 200 OK
+```
 
 ## Usage
 
