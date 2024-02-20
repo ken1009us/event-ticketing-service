@@ -22,7 +22,7 @@ async def create_event_endpoint(event: Event):
     return event_created
 
 
-@router.delete("/events/{event_id}", status_code=204)
+@router.delete("/events/{event_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_event_endpoint(event_id: int):
     success, message = await delete_event(event_id)
     if not success:
