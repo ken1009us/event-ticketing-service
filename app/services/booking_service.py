@@ -1,15 +1,32 @@
 from sqlmodel import Session, select
 from ..models.reservation import Reservation
+from ..models.user import User
 from ..models.event import Event
 from ..database import engine
 
 
+def get_all_reservations():
+    with Session(engine) as session:
+        reservations = session.exec(select(Reservation)).all()
+        if not reservations:
+            return None, "Reservations not found"
+        return reservations, "Reservations found successfully"
+
+
 def get_reservations_by_user(user_id: int):
     with Session(engine) as session:
+        user = session.get(User, user_id)
+        if not user:
+            return None, "User not found"
+
         reservations = session.exec(
             select(Reservation).where(Reservation.user_id == user_id)
         ).all()
-        return reservations
+
+        if not reservations:
+            return None, f"No reservations found for user ID {user_id}"
+
+        return reservations, "Reservation found by userID"
 
 
 def create_reservation(reservation: Reservation) -> tuple[Reservation, str]:

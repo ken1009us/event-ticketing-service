@@ -5,11 +5,14 @@ from ..database import engine
 
 def create_user(user: User) -> User:
     with Session(engine) as session:
+        if not user:
+            return None, "User not found"
+
         session.add(user)
         session.commit()
         session.refresh(user)
 
-        return user
+        return user, "User created successfully"
 
 
 def get_user(user_id: int) -> User:
