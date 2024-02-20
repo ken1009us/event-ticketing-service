@@ -1,5 +1,6 @@
 import requests
 
+from pyfiglet import Figlet
 from validation.input_validation import validate_int, validate_datetime
 
 API_BASE_URL = "http://localhost:8000"
@@ -42,6 +43,7 @@ def list_events():
     if response.status_code == 200:
         events = response.json()
         for event in events:
+            print(f"Event ID: {event['id']}")
             print(f"Name: {event['name']}")
             print(f"Description: {event['description']}")
             print(f"Date and Time: {event['date_time']}")
@@ -56,10 +58,21 @@ def create_user():
     name = input("Name: ")
     user = {"name": name}
     response = requests.post(f"{API_BASE_URL}/users/", json=user)
-    if response.status_code == 200:
+    if response.status_code == 201:
         print("User created successfully.")
     else:
         print("Failed to create user.")
+
+
+def list_users():
+    print("\n--- List of Users ---")
+    response = requests.get(f"{API_BASE_URL}/users/")
+    if response.status_code == 200:
+        users = response.json()
+        for user in users:
+            print(f"ID: {user['id']}, Name: {user['name']}")
+    else:
+        print("Failed to fetch users.")
 
 
 def get_user_reservations():
@@ -109,8 +122,7 @@ def create_reservation():
         "tickets_reserved": int(tickets_reserved),
     }
     response = requests.post(f"{API_BASE_URL}/reservations/", json=reservation)
-    if response.status_code == 200:
-        reservation = response.json()["reservation"]
+    if response.status_code == 201:
         print("Reservation created successfully:")
         print(f"User ID: {reservation['user_id']}")
         print(f"Event ID: {reservation['event_id']}")
@@ -123,21 +135,40 @@ def lookup_reservation():
     print("\n--- Lookup Reservation ---")
     response = requests.get(f"{API_BASE_URL}/reservations/")
     if response.status_code == 200:
-        reservation = response.json()
-        print("Reservation Details:")
-        print(f"Reservation ID: {reservation['id']}")
-        print(f"User ID: {reservation['user_id']}")
-        print(f"Event ID: {reservation['event_id']}")
-        print(f"Tickets Reserved: {reservation['tickets_reserved']}")
+        reservations = response.json()
+        for index, reservation in enumerate(reservations):
+            print(f"Reservation {index + 1} Details:")
+            print("--------------------------------")
+            print(f"Reservation ID: {reservation['id']}")
+            print(f"User ID: {reservation['user_id']}")
+            print(f"Event ID: {reservation['event_id']}")
+            print(f"Tickets Reserved: {reservation['tickets_reserved']}\n")
     else:
         print(f"Failed to lookup reservation. Detail: {response.text}")
 
 
 def update_reservation():
     print("\n--- Update Reservation ---")
-    reservation_id = input("Reservation ID: ")
-    user_id = input("User ID: ")
-    tickets_reserved = input("New Tickets Reserved: ")
+    user_id_str = input("User ID: ")
+    valid_user_id, user_id = validate_int(user_id_str, "User ID")
+    if not valid_user_id:
+        print(user_id)
+        return
+
+    reservation_id_str = input("Reservation ID: ")
+    reservation_id_str, reservation_id = validate_int(reservation_id_str, "User ID")
+    if not reservation_id_str:
+        print(reservation_id)
+        return
+
+    tickets_reserved_str = input("New Tickets Reserved: ")
+    valid_tickets, tickets_reserved = validate_int(
+        tickets_reserved_str, "Tickets Reserved"
+    )
+    if not valid_tickets:
+        print(tickets_reserved)
+        return
+
     data = {"user_id": int(user_id), "tickets_reserved": int(tickets_reserved)}
     response = requests.put(f"{API_BASE_URL}/reservations/{reservation_id}", json=data)
     if response.status_code == 200:
@@ -153,7 +184,12 @@ def update_reservation():
 
 def delete_reservation():
     print("\n--- Delete Reservation ---")
-    reservation_id = input("Reservation ID: ")
+    reservation_id_str = input("Reservation ID: ")
+    reservation_id_str, reservation_id = validate_int(reservation_id_str, "User ID")
+    if not reservation_id_str:
+        print(reservation_id)
+        return
+
     response = requests.delete(f"{API_BASE_URL}/reservations/{reservation_id}")
     if response.status_code == 204:
         print("Reservation deleted successfully.")
@@ -165,13 +201,14 @@ def main_menu():
     print("\n--- Event Ticketing CLI ---")
     print("1: List Events")
     print("2: Create Event")
-    print("3: Create User")
-    print("4: Create Reservation")
-    print("5: Update Reservation")
-    print("6: Delete Reservation")
-    print("7: Get User Reservations")
-    print("8: Lookup Reservation")
-    print("9: Exit")
+    print("3: List Users")
+    print("4: Create User")
+    print("5: Create Reservation")
+    print("6: Update Reservation")
+    print("7: Delete Reservation")
+    print("8: Get User Reservations")
+    print("9: Lookup Reservation")
+    print("10: Exit")
     choice = input("Enter choice: ")
     return choice
 
@@ -184,18 +221,20 @@ def main():
         elif choice == "2":
             create_event()
         elif choice == "3":
-            create_user()
+            list_users()
         elif choice == "4":
-            create_reservation()
+            create_user()
         elif choice == "5":
-            update_reservation()
+            create_reservation()
         elif choice == "6":
-            delete_reservation()
+            update_reservation()
         elif choice == "7":
-            get_user_reservations()
+            delete_reservation()
         elif choice == "8":
-            lookup_reservation()
+            get_user_reservations()
         elif choice == "9":
+            lookup_reservation()
+        elif choice == "10":
             print("Exiting...")
             break
         else:
@@ -203,4 +242,6 @@ def main():
 
 
 if __name__ == "__main__":
+    f = Figlet(font="slant")
+    print(f.renderText("Event Ticketing Service"))
     main()
