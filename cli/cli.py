@@ -17,6 +17,8 @@ def create_event():
         print(date_time)
         return
 
+    date_time_iso = date_time.isoformat()
+
     tickets_total_str = input("Total Tickets: ")
     valid_tickets, tickets_total = validate_int(tickets_total_str, "Total Tickets")
     if not valid_tickets:
