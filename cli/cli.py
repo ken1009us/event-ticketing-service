@@ -3,7 +3,7 @@ import requests
 from pyfiglet import Figlet
 from validation.input_validation import validate_int, validate_datetime
 
-API_BASE_URL = "http://localhost:8000"
+API_BASE_URL = "http://0.0.0.0:8000"
 
 
 def create_event():
@@ -34,7 +34,9 @@ def create_event():
     if response.status_code == 201:
         print("Event created successfully.")
     else:
-        print("Failed to create event.")
+        print(
+            f"Failed to create event.  Status code: {response.status_code}, Detail: {response.text}"
+        )
 
 
 def list_events():
@@ -50,7 +52,9 @@ def list_events():
             print(f"Total Tickets: {event['tickets_total']}")
             print(f"Tickets Available: {event['tickets_available']}\n")
     else:
-        print("Failed to fetch events.")
+        print(
+            f"Failed to fetch events.  Status code: {response.status_code}, Detail: {response.text}"
+        )
 
 
 def create_user():
@@ -61,7 +65,9 @@ def create_user():
     if response.status_code == 201:
         print("User created successfully.")
     else:
-        print("Failed to create user.")
+        print(
+            f"Failed to create user.  Status code: {response.status_code}, Detail: {response.text}"
+        )
 
 
 def list_users():
@@ -72,7 +78,9 @@ def list_users():
         for user in users:
             print(f"ID: {user['id']}, Name: {user['name']}")
     else:
-        print("Failed to fetch users.")
+        print(
+            f"Failed to fetch users. Status code: {response.status_code}, Detail: {response.text}"
+        )
 
 
 def get_user_reservations():
@@ -128,7 +136,9 @@ def create_reservation():
         print(f"Event ID: {reservation['event_id']}")
         print(f"Tickets Reserved: {reservation['tickets_reserved']}")
     else:
-        print("Failed to create reservation.")
+        print(
+            f"Failed to create reservation.  Status code: {response.status_code}, Detail: {response.text}"
+        )
 
 
 def lookup_reservation():
@@ -144,7 +154,9 @@ def lookup_reservation():
             print(f"Event ID: {reservation['event_id']}")
             print(f"Tickets Reserved: {reservation['tickets_reserved']}\n")
     else:
-        print(f"Failed to lookup reservation. Detail: {response.text}")
+        print(
+            f"Failed to lookup reservation.  Status code: {response.status_code}, Detail: {response.text}"
+        )
 
 
 def update_reservation():
@@ -179,7 +191,9 @@ def update_reservation():
         print(f"Event ID: {reservation['event_id']}")
         print(f"Tickets Reserved: {reservation['tickets_reserved']}")
     else:
-        print(f"Failed to update reservation. Detail: {response.text}")
+        print(
+            f"Failed to update reservation.  Status code: {response.status_code}, Detail: {response.text}"
+        )
 
 
 def delete_reservation():
@@ -194,7 +208,9 @@ def delete_reservation():
     if response.status_code == 204:
         print("Reservation deleted successfully.")
     else:
-        print(f"Failed to delete reservation. Detail: {response.text}")
+        print(
+            f"Failed to delete reservation.  Status code: {response.status_code}, Detail: {response.text}"
+        )
 
 
 def main_menu():
