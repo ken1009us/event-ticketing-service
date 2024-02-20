@@ -1,5 +1,5 @@
 from typing import List
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Request
 from ..models.reservation import Reservation
 from ..services.booking_service import (
     create_reservation,
@@ -49,9 +49,9 @@ async def update_reservation_endpoint(reservation_id: int, request: Request):
     return reservation
 
 
-@router.delete("/reservations/{reservation_id}")
+@router.delete("/reservations/{reservation_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def cancel_reservation_endpoint(reservation_id: int):
     success, message = await cancel_reservation(reservation_id)
     if not success:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=message)
-    return {"message": message}
+    return {"message": "Reservation deleted successfully"}
