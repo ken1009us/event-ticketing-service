@@ -23,22 +23,25 @@
 Enter choice:
 ```
 
-This project is an event ticketing service built with FastAPI and MySQL. It allows users to view events, make reservations for tickets, and manage their reservations.
+This project is an event ticketing service built with FastAPI and MySQL. It allows users to view events, make reservations for tickets, and manage their reservations, etc.
+
+This service also stands out for its ability to handle multiple requests concurrently, ensuring high performance and responsiveness even under load. Ideal for event organizers and platforms looking for a scalable ticket reservation system.
 
 ## Features
 
-- View a list of all events and associated information such as name, date, and number of tickets available.
-- Make a reservation for a number of tickets for a given event.
-- Manage an existing ticket reservation (change the number of tickets or cancel the reservation).
-- Utilizes MySQL for data persistence.
-- Dockerized application setup including a MySQL database.
+- Asynchronous Core: Utilizes FastAPI's asynchronous capabilities to manage event listings, ticket reservations, and user interactions without blocking, ensuring swift response times.
+- CRUD Operations: Supports Create, Read, Update, and Delete (CRUD) operations for events, users, and reservations, providing a comprehensive management system.
+- Concurrency Handling: Designed to handle multiple ticket reservations and queries concurrently, preventing double bookings and enhancing user experience.
+- Data Validation: Implements rigorous input validation to ensure data integrity and provide informative feedback for API consumers.
+- Docker Integration: Comes with a Dockerfile and docker-compose.yaml for easy deployment and environment setup, ensuring consistency across different setups.
+- User and Reservation Management: Offers detailed user management and the ability to view all reservations, enhancing administrative capabilities.
 
 ## Technologies
 
 - FastAPI
 - MySQL
 - Pydantic
-- SQLAlchemy
+- SQLAlchemy (AsyncIO Edition)
 - Sqlmodel
 - Docker
 
@@ -111,7 +114,7 @@ INFO:     XXX.X.X.X:XXXX - "GET /events/ HTTP/1.1" 200 OK
 
 ### Option 1
 
-You can see the documentation via OpenAPI: `http://0.0.0.0:8000/docs#` and use Curl or Postman to test the API.
+Navigate to http://0.0.0.0:8000/docs# to view the Swagger UI documentation and test the API endpoints. You can use CURL commands or link to a Postman collection if available.
 
 Something we can do......
 
