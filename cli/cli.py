@@ -59,6 +59,23 @@ def list_events():
         )
 
 
+def delete_event():
+    print("\n--- Delete Event ---")
+    event_id_str = input("Event ID: ")
+    event_id_str, event_id = validate_int(event_id_str, "User ID")
+    if not event_id_str:
+        print(event_id)
+        return
+
+    response = requests.delete(f"{API_BASE_URL}/events/{event_id}")
+    if response.status_code == 204:
+        print("Event deleted successfully.")
+    else:
+        print(
+            f"Failed to delete event.  Status code: {response.status_code}, Detail: {response.text}"
+        )
+
+
 def create_user():
     print("\n--- Create User ---")
     name = input("Name: ")
