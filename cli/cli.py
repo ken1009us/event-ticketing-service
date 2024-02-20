@@ -28,7 +28,7 @@ def create_event():
     event = {
         "name": name,
         "description": description,
-        "date_time": date_time,
+        "date_time": date_time_iso,
         "tickets_total": int(tickets_total),
         "tickets_available": int(tickets_total),
     }
