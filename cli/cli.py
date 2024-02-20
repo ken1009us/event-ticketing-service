@@ -104,12 +104,14 @@ def list_users():
 
 def get_user_reservations():
     print("\n--- User Reservations ---")
-    user_id = input("Enter User ID: ")
+    user_id = input("Enter User ID: \n")
     response = requests.get(f"{API_BASE_URL}/users/{user_id}/reservations")
     if response.status_code == 200:
         reservations = response.json()
         if reservations:
-            for reservation in reservations:
+            for index, reservation in enumerate(reservations):
+                print(f"Reservation {index + 1} Details:")
+                print("--------------------------------")
                 print(f"Reservation ID: {reservation['id']}")
                 print(f"Event ID: {reservation['event_id']}")
                 print(f"Tickets Reserved: {reservation['tickets_reserved']}\n")
@@ -200,7 +202,10 @@ def update_reservation():
         print(tickets_reserved)
         return
 
-    data = {"user_id": int(user_id), "tickets_reserved": int(tickets_reserved)}
+    data = {
+        "user_id": int(user_id),
+        "tickets_reserved": int(tickets_reserved),
+    }
     response = requests.put(f"{API_BASE_URL}/reservations/{reservation_id}", json=data)
     if response.status_code == 200:
         print("Reservation updated successfully.")
