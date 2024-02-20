@@ -30,9 +30,17 @@ async def create_reservation_endpoint(reservation: Reservation):
 
 
 @router.put("/reservations/{reservation_id}", response_model=Reservation)
-async def update_reservation_endpoint(
-    reservation_id: int, user_id: int, tickets_reserved: int
-):
+async def update_reservation_endpoint(reservation_id: int, request: Request):
+    body = await request.json()
+    user_id = body.get("user_id")
+    tickets_reserved = body.get("tickets_reserved")
+
+    if user_id is None or tickets_reserved is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Missing user_id or tickets_reserved in request body",
+        )
+
     reservation, message = await update_reservation(
         reservation_id, user_id, tickets_reserved
     )
