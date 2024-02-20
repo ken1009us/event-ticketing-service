@@ -1,7 +1,15 @@
-from sqlmodel import Session
+from sqlmodel import Session, select
 from ..models.reservation import Reservation
 from ..models.event import Event
 from ..database import engine
+
+
+def get_reservations_by_user(user_id: int):
+    with Session(engine) as session:
+        reservations = session.exec(
+            select(Reservation).where(Reservation.user_id == user_id)
+        ).all()
+        return reservations
 
 
 def create_reservation(reservation: Reservation) -> tuple[Reservation, str]:
@@ -23,11 +31,11 @@ def create_reservation(reservation: Reservation) -> tuple[Reservation, str]:
         return reservation, "Reservation created successfully"
 
 
-def update_reservation(reservation_id: int, tickets_reserved: int):
+def update_reservation(reservation_id: int, user_id: int, tickets_reserved: int):
     with Session(engine) as session:
         reservation = session.get(Reservation, reservation_id)
-        if not reservation:
-            return None, "Reservation not found"
+        if not reservation or reservation.user_id != user_id:
+            return None, "Reservation not found or user mismatch"
 
         event = session.get(Event, reservation.event_id)
         additional_tickets_needed = tickets_reserved - reservation.tickets_reserved
