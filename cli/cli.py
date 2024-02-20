@@ -241,14 +241,15 @@ def main_menu():
     print("\n--- Event Ticketing CLI ---")
     print("1: List Events")
     print("2: Create Event")
-    print("3: List Users")
-    print("4: Create User")
-    print("5: Create Reservation")
-    print("6: Update Reservation")
-    print("7: Delete Reservation")
-    print("8: Get User Reservations")
-    print("9: Lookup Reservation")
-    print("10: Exit")
+    print("3: Delete Event")
+    print("4: List Users")
+    print("5: Create User")
+    print("6: Create Reservation")
+    print("7: Update Reservation")
+    print("8: Delete Reservation")
+    print("9: Get User Reservations")
+    print("10: Lookup Reservation")
+    print("11: Exit")
     choice = input("Enter choice: ")
     return choice
 
@@ -261,20 +262,22 @@ def main():
         elif choice == "2":
             create_event()
         elif choice == "3":
-            list_users()
+            delete_event()
         elif choice == "4":
-            create_user()
+            list_users()
         elif choice == "5":
-            create_reservation()
+            create_user()
         elif choice == "6":
-            update_reservation()
+            create_reservation()
         elif choice == "7":
-            delete_reservation()
+            update_reservation()
         elif choice == "8":
-            get_user_reservations()
+            delete_reservation()
         elif choice == "9":
-            lookup_reservation()
+            get_user_reservations()
         elif choice == "10":
+            lookup_reservation()
+        elif choice == "11":
             print("Exiting...")
             break
         else:
