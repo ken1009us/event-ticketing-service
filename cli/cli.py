@@ -104,7 +104,8 @@ def list_users():
 
 def get_user_reservations():
     print("\n--- User Reservations ---")
-    user_id = input("Enter User ID: \n")
+    user_id = input("Enter User ID: ")
+    print("")
     response = requests.get(f"{API_BASE_URL}/users/{user_id}/reservations")
     if response.status_code == 200:
         reservations = response.json()
