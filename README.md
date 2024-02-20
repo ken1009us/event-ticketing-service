@@ -55,6 +55,17 @@ MYSQL_USER={MYSQL_USER}
 MYSQL_PASSWORD={MYSQL_PASSWORD}
 ```
 
+Comment out below if you want to run local: uvicorn app.main:app --reload
+
+```bash
+MYSQL_ROOT_PASSWORD={MYSQL_ROOT_PASSWORD}
+MYSQL_DATABASE={MYSQL_DATABASE}
+MYSQL_USER={MYSQL_USER}
+MYSQL_PASSWORD={MYSQL_PASSWORD}
+```
+
+Run docker-compose
+
 ```bash
 docker-compose up --build
 ```
@@ -64,6 +75,8 @@ The application should now be running at `http://0.0.0.0:8000`.
 ## Usage
 
 You can see the documentation via OpenAPI: `http://0.0.0.0:8000/docs#` and use curl or Postman to test the API.
+
+Something we can do......
 
 ### View Events
 
@@ -105,4 +118,28 @@ $ curl -X 'POST' \
 $ curl -X 'PUT' \
   'http://0.0.0.0:8000/reservations/1?tickets_reserved=5' \
   -H 'accept: application/json'
+```
+
+I also create a user-friendly, pretty format interface for the users to test the API.
+
+### Run Client file
+
+```bash
+python cli.py
+```
+
+Then it will pop out an interface for you:
+
+```bash
+--- Event Ticketing CLI ---
+1: List Events
+2: Create Event
+3: Create User
+4: Create Reservation
+5: Update Reservation
+6: Delete Reservation
+7: Get User Reservations
+8: Lookup Reservation
+9: Exit
+Enter choice:
 ```
