@@ -1,33 +1,41 @@
 from sqlmodel import Session, select
 from ..models.event import Event
-from ..database import engine
+from ..database import AsyncSessionLocal
 
 
-def get_all_events():
-    with Session(engine) as session:
-        events = session.exec(select(Event)).all()
+async def get_all_events():
+    async with AsyncSessionLocal() as session:
+        result = await session.execute(select(Event))
+        events = result.scalars().all()
         if not events:
             return None, "Events not found"
         return events, "Event found successfully"
 
 
-def create_event(event_data: Event) -> tuple[Event, str]:
-    with Session(engine) as session:
-        session.add(event_data)
-        session.commit()
-        session.refresh(event_data)
-        if not event_data:
-            return None, "Events not found"
-        return event_data, "Event created successfully"
+async def create_event(event_data: Event) -> tuple[Event, str]:
+    async with AsyncSessionLocal() as session:
+        try:
+            session.add(event_data)
+            await session.commit()
+            await session.refresh(event_data)
+            return event_data, "Event created successfully"
+
+        except Exception as e:
+            await session.rollback()
+            return None, f"Failed to create event: {str(e)}"
 
 
-def delete_event(event_id: int) -> tuple[bool, str]:
-    with Session(engine) as session:
-        event = session.get(Event, event_id)
+async def delete_event(event_id: int) -> tuple[bool, str]:
+    async with AsyncSessionLocal() as session:
+        event = await session.get(Event, event_id)
         if not event:
             return False, "Event not found"
 
-        session.delete(event)
-        session.commit()
+        try:
+            session.delete(event)
+            await session.commit()
+            return True, "Event deleted successfully"
 
-        return True, "Event deleted successfully"
+        except Exception as e:
+            await session.rollback()
+            return None, f"Failed to delete event{event_id}: {str(e)}"

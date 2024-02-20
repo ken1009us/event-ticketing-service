@@ -1,35 +1,47 @@
-from sqlmodel import Session
+from sqlmodel import select
 from ..models.user import User
-from ..database import engine
+from ..database import AsyncSessionLocal
 
 
-def create_user(user: User) -> User:
-    with Session(engine) as session:
+async def get_all_users():
+    async with AsyncSessionLocal() as session:
+        result = await session.execute(select(User))
+        users = result.scalars().all()
+        if not users:
+            return None, f"Users not found"
+
+        return users, f"Found users"
+
+
+async def get_user(user_id: int) -> tuple[User, str]:
+    async with AsyncSessionLocal() as session:
+        user = await session.get(User, user_id)
         if not user:
-            return None, "User not found"
+            return None, f"User {user_id} not found"
 
+        return user, f"Found user {user_id}"
+
+
+async def create_user(user: User) -> User:
+    async with AsyncSessionLocal() as session:
         session.add(user)
-        session.commit()
-        session.refresh(user)
+        await session.commit()
+        await session.refresh(user)
 
         return user, "User created successfully"
 
 
-def get_user(user_id: int) -> User:
-    with Session(engine) as session:
-        user = session.get(User, user_id)
-        if user:
-            return user
-        else:
-            return None
-
-
-def delete_user(user_id: int) -> tuple[bool, str]:
-    with Session(engine) as session:
-        user = session.get(User, user_id)
+async def delete_user(user_id: int) -> tuple[bool, str]:
+    async with AsyncSessionLocal() as session:
+        user = await session.get(User, user_id)
         if not user:
             return False, f"User {user_id} not found"
 
-        session.delete(user)
-        session.commit()
-        return True, f"User {user_id} deleted successfully"
+        try:
+            session.delete(user)
+            await session.commit()
+            return True, f"User {user_id} deleted successfully"
+
+        except Exception as e:
+            await session.rollback()
+            return None, f"Failed to create delete user{user_id}: {str(e)}"

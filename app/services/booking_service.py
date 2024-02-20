@@ -1,27 +1,29 @@
-from sqlmodel import Session, select
+from sqlmodel import select
 from ..models.reservation import Reservation
 from ..models.user import User
 from ..models.event import Event
-from ..database import engine
+from ..database import AsyncSessionLocal
 
 
-def get_all_reservations():
-    with Session(engine) as session:
-        reservations = session.exec(select(Reservation)).all()
+async def get_all_reservations():
+    async with AsyncSessionLocal() as session:
+        result = await session.execute(select(Reservation))
+        reservations = result.scalars().all()
         if not reservations:
             return None, "Reservations not found"
         return reservations, "Reservations found successfully"
 
 
-def get_reservations_by_user(user_id: int):
-    with Session(engine) as session:
-        user = session.get(User, user_id)
+async def get_reservations_by_user(user_id: int):
+    async with AsyncSessionLocal() as session:
+        user = await session.get(User, user_id)
         if not user:
             return None, "User not found"
 
-        reservations = session.exec(
+        result = await session.execute(
             select(Reservation).where(Reservation.user_id == user_id)
-        ).all()
+        )
+        reservations = result.scalars().all()
 
         if not reservations:
             return None, f"No reservations found for user ID {user_id}"
@@ -29,9 +31,9 @@ def get_reservations_by_user(user_id: int):
         return reservations, "Reservation found by userID"
 
 
-def create_reservation(reservation: Reservation) -> tuple[Reservation, str]:
-    with Session(engine) as session:
-        event = session.get(Event, reservation.event_id)
+async def create_reservation(reservation: Reservation) -> tuple[Reservation, str]:
+    async with AsyncSessionLocal() as session:
+        event = await session.get(Event, reservation.event_id)
         if not event:
             return None, "Event does not exist"
         if event.tickets_available < reservation.tickets_reserved:
@@ -41,20 +43,24 @@ def create_reservation(reservation: Reservation) -> tuple[Reservation, str]:
             )
 
         event.tickets_available -= reservation.tickets_reserved
-        session.add(reservation)
-        session.add(event)
-        session.commit()
+        try:
+            session.add(reservation)
+            session.add(event)
+            await session.commit()
+            return reservation, "Reservation created successfully"
 
-        return reservation, "Reservation created successfully"
+        except Exception as e:
+            await session.rollback()
+            return None, f"Failed to create reservation: {str(e)}"
 
 
-def update_reservation(reservation_id: int, user_id: int, tickets_reserved: int):
-    with Session(engine) as session:
-        reservation = session.get(Reservation, reservation_id)
+async def update_reservation(reservation_id: int, user_id: int, tickets_reserved: int):
+    async with AsyncSessionLocal() as session:
+        reservation = await session.get(Reservation, reservation_id)
         if not reservation or reservation.user_id != user_id:
             return None, "Reservation not found or user mismatch"
 
-        event = session.get(Event, reservation.event_id)
+        event = await session.get(Event, reservation.event_id)
         additional_tickets_needed = tickets_reserved - reservation.tickets_reserved
         if additional_tickets_needed > event.tickets_available:
             return (
@@ -64,21 +70,26 @@ def update_reservation(reservation_id: int, user_id: int, tickets_reserved: int)
 
         event.tickets_available -= additional_tickets_needed
         reservation.tickets_reserved = tickets_reserved
-        session.commit()
+        await session.commit()
 
         return reservation, "Reservation updated successfully"
 
 
-def cancel_reservation(reservation_id: int) -> tuple[bool, str]:
-    with Session(engine) as session:
-        reservation = session.get(Reservation, reservation_id)
+async def cancel_reservation(reservation_id: int) -> tuple[bool, str]:
+    async with AsyncSessionLocal() as session:
+        reservation = await session.get(Reservation, reservation_id)
         if not reservation:
             return False, "Reservation not found"
 
-        event = session.get(Event, reservation.event_id)
+        event = await session.get(Event, reservation.event_id)
         event.tickets_available += reservation.tickets_reserved
-        session.delete(reservation)
-        session.add(event)
-        session.commit()
+        try:
+            session.delete(reservation)
+            session.add(event)
+            await session.commit()
 
-        return True, "Reservation cancelled successfully"
+            return True, "Reservation cancelled successfully"
+
+        except Exception as e:
+            await session.rollback()
+            return None, f"Failed to cancel reservation: {str(e)}"
