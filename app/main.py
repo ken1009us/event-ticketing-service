@@ -7,8 +7,7 @@ app = FastAPI()
 
 
 async def app_lifespan(app: FastAPI):
-    # Startup code
-    init_db()
+    await init_db()
     yield
 
 
@@ -20,5 +19,5 @@ app.include_router(users.router)
 
 
 @app.get("/")
-def read_root():
-    return "Welcome to the event ticketing service."
+async def read_root():
+    return {"message": "Welcome to the event ticketing service."}
