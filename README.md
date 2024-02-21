@@ -118,6 +118,8 @@ INFO:     XXX.X.X.X:XXXX - "GET /events/ HTTP/1.1" 200 OK
 
 Navigate to http://0.0.0.0:8000/docs# to view the Swagger UI documentation and test the API endpoints. You can use CURL commands or link to a Postman collection if available.
 
+![image](https://github.com/ken1009us/event-ticketing-service/blob/main/img/swaggerui.png "swaggerUI")
+
 Something we can do......
 
 #### View Events
