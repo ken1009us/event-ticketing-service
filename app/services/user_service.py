@@ -1,5 +1,7 @@
 from sqlmodel import select
 from ..models.user import User
+from ..models.reservation import Reservation
+from ..models.event import Event
 from ..database import AsyncSessionLocal
 
 
@@ -64,10 +66,36 @@ async def create_user(user: User) -> User:
 
 
 async def delete_user(user_id: int) -> tuple[bool, str]:
+    """
+    Delete an existing user by their user ID.
+
+    Parameters:
+        user_id (int): The unique identifier of the user to delete.
+
+    Returns:
+        tuple: A tuple indicating whether the deletion was successful,
+               and a corresponding message.
+    """
     async with AsyncSessionLocal() as session:
         async with session.begin():
+
+            reservations = await session.execute(
+                select(Reservation).where(Reservation.user_id == user_id)
+            )
+            reservations = reservations.scalars().all()
+
+            for reservation in reservations:
+                event = await session.get(Event, reservation.event_id)
+                if event:
+                    event.tickets_available += reservation.tickets_reserved
+                    await session.delete(reservation)
+
             user = await session.get(User, user_id)
+            if not user:
+                return False, f"User {user_id} not found"
+
             await session.delete(user)
+        await session.commit()
         return True, f"User {user_id} deleted successfully"
 
         # user = await session.get(User, user_id)

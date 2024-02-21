@@ -1,5 +1,6 @@
-from sqlmodel import Session, select
+from sqlmodel import select
 from ..models.event import Event
+from ..models.reservation import Reservation
 from ..database import AsyncSessionLocal
 
 
@@ -46,9 +47,27 @@ async def create_event(event_data: Event) -> tuple[Event, str]:
 
 
 async def delete_event(event_id: int) -> tuple[bool, str]:
+    """
+    Deletes an event identified by its ID.
+
+    Parameters:
+        event_id (int): The unique identifier of the event to delete.
+
+    Returns:
+        tuple: A tuple indicating whether the deletion was successful, and a corresponding message.
+    """
     async with AsyncSessionLocal() as session:
         async with session.begin():
+            reservations = await session.execute(
+                select(Reservation).where(Reservation.event_id == event_id)
+            )
+            for reservation in reservations.scalars():
+                await session.delete(reservation)
+
             event = await session.get(Event, event_id)
+            if not event:
+                return False, "Event not found"
+
             await session.delete(event)
         return True, "Event deleted successfully"
 

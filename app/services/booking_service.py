@@ -1,7 +1,7 @@
 from sqlmodel import select
 from ..models.reservation import Reservation
-from ..models.user import User
 from ..models.event import Event
+from ..models.user import User
 from ..database import AsyncSessionLocal
 
 
@@ -49,8 +49,22 @@ async def get_reservations_by_user(user_id: int):
 
 
 async def create_reservation(reservation: Reservation) -> tuple[Reservation, str]:
+    """
+    Create a new reservation in the database.
+
+    Parameters:
+        reservation (Reservation): The reservation object to be added to the database.
+
+    Returns:
+        tuple: A tuple containing the created Reservation object and a success message,
+               or None and an error message if the creation fails.
+    """
     async with AsyncSessionLocal() as session:
         async with session.begin():
+            user = await session.get(User, reservation.user_id)
+            if not user:
+                return None, "User not found"
+
             if reservation.tickets_reserved < 1:
                 return (
                     None,
