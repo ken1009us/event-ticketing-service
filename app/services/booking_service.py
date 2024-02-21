@@ -6,6 +6,13 @@ from ..database import AsyncSessionLocal
 
 
 async def get_all_reservations():
+    """
+    Fetch all reservations from the database.
+
+    Returns:
+        tuple: A tuple containing a list of Reservation objects and a success message,
+               or None and an error message if no reservations are found.
+    """
     async with AsyncSessionLocal() as session:
         async with session.begin():
             result = await session.execute(select(Reservation))
@@ -18,6 +25,16 @@ async def get_all_reservations():
 
 
 async def get_reservations_by_user(user_id: int):
+    """
+    Fetch all reservations made by a specific user.
+
+    Parameters:
+        user_id (int): The unique identifier of the user.
+
+    Returns:
+        tuple: A tuple containing a list of Reservation objects made by the specified user
+               and a success message, or None and an error message if no reservations are found.
+    """
     async with AsyncSessionLocal() as session:
         async with session.begin():
             result = await session.execute(
@@ -56,6 +73,18 @@ async def create_reservation(reservation: Reservation) -> tuple[Reservation, str
 
 
 async def update_reservation(reservation_id: int, user_id: int, tickets_reserved: int):
+    """
+    Update an existing reservation.
+
+    Parameters:
+        reservation_id (int): The ID of the reservation to update.
+        user_id (int): The ID of the user making the update request.
+        tickets_reserved (int): The new number of tickets reserved.
+
+    Returns:
+        tuple: A tuple containing the updated Reservation object and a success message,
+               or None and an error message if the update fails.
+    """
     async with AsyncSessionLocal() as session:
         async with session.begin():
             reservation = await session.get(Reservation, reservation_id)
@@ -81,6 +110,16 @@ async def update_reservation(reservation_id: int, user_id: int, tickets_reserved
 
 
 async def cancel_reservation(reservation_id: int) -> tuple[bool, str]:
+    """
+    Cancel an existing reservation.
+
+    Parameters:
+        reservation_id (int): The ID of the reservation to cancel.
+
+    Returns:
+        tuple: A tuple indicating whether the cancellation was successful,
+               and a corresponding message.
+    """
     async with AsyncSessionLocal() as session:
         async with session.begin():
             reservation = await session.get(Reservation, reservation_id)

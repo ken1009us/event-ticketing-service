@@ -4,6 +4,13 @@ from ..database import AsyncSessionLocal
 
 
 async def get_all_users():
+    """
+    Fetch all users from the database.
+
+    Returns:
+        tuple: A tuple containing a list of User objects and a success message,
+               or None and an error message if no users are found.
+    """
     async with AsyncSessionLocal() as session:
         async with session.begin():
             result = await session.execute(select(User))
@@ -15,6 +22,16 @@ async def get_all_users():
 
 
 async def get_user(user_id: int) -> tuple[User, str]:
+    """
+    Fetch a specific user by their user ID.
+
+    Parameters:
+        user_id (int): The unique identifier of the user.
+
+    Returns:
+        tuple: A tuple containing the User object and a success message,
+               or None and an error message if the user is not found.
+    """
     async with AsyncSessionLocal() as session:
         async with session.begin():
             user = await session.get(User, user_id)
@@ -25,6 +42,15 @@ async def get_user(user_id: int) -> tuple[User, str]:
 
 
 async def create_user(user: User) -> User:
+    """
+    Create a new user in the database.
+
+    Parameters:
+        user (User): The user object to be added to the database.
+
+    Returns:
+        User: The created User object along with a success message.
+    """
     async with AsyncSessionLocal() as session:
         async with session.begin():
             session.add(user)

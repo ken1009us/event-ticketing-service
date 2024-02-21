@@ -4,6 +4,13 @@ from ..database import AsyncSessionLocal
 
 
 async def get_all_events():
+    """
+    Retrieves all events from the database.
+
+    Returns:
+        tuple: A tuple containing a list of Event objects if found, and a corresponding message.
+               Returns None and an error message if no events are found.
+    """
     async with AsyncSessionLocal() as session:
         async with session.begin():
             result = await session.execute(select(Event))
@@ -14,6 +21,15 @@ async def get_all_events():
 
 
 async def create_event(event_data: Event) -> tuple[Event, str]:
+    """
+    Creates a new event and saves it to the database.
+
+    Parameters:
+        event_data (Event): The event data to save.
+
+    Returns:
+        tuple: A tuple containing the newly created Event object and a success message.
+    """
     async with AsyncSessionLocal() as session:
         async with session.begin():
             session.add(event_data)
