@@ -18,9 +18,9 @@ async def get_all_users():
             result = await session.execute(select(User))
             users = result.scalars().all()
             if not users:
-                return None, f"Users not found"
+                return None, "Users not found"
 
-            return users, f"Found users"
+            return users, "Found users"
 
 
 async def get_user(user_id: int) -> tuple[User, str]:
@@ -56,13 +56,8 @@ async def create_user(user: User) -> User:
     async with AsyncSessionLocal() as session:
         async with session.begin():
             session.add(user)
+
         return user, "User created successfully"
-
-        # session.add(user)
-        # await session.commit()
-        # await session.refresh(user)
-
-        # return user, "User created successfully"
 
 
 async def delete_user(user_id: int) -> tuple[bool, str]:
@@ -78,6 +73,9 @@ async def delete_user(user_id: int) -> tuple[bool, str]:
     """
     async with AsyncSessionLocal() as session:
         async with session.begin():
+            user = await session.get(User, user_id)
+            if not user:
+                return False, f"User {user_id} not found"
 
             reservations = await session.execute(
                 select(Reservation).where(Reservation.user_id == user_id)
@@ -90,23 +88,8 @@ async def delete_user(user_id: int) -> tuple[bool, str]:
                     event.tickets_available += reservation.tickets_reserved
                     await session.delete(reservation)
 
-            user = await session.get(User, user_id)
-            if not user:
-                return False, f"User {user_id} not found"
-
             await session.delete(user)
+
         await session.commit()
+
         return True, f"User {user_id} deleted successfully"
-
-        # user = await session.get(User, user_id)
-        # if not user:
-        #     return False, f"User {user_id} not found"
-
-        # try:
-        #     session.delete(user)
-        #     await session.commit()
-        #     return True, f"User {user_id} deleted successfully"
-
-        # except Exception as e:
-        #     await session.rollback()
-        #     return None, f"Failed to create delete user{user_id}: {str(e)}"
