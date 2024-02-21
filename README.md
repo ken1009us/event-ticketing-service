@@ -70,7 +70,33 @@ $ git clone git@github.com:ken1009us/event-ticketing-service.git
 $ cd event-ticketing-service
 ```
 
-3. Start the application with Docker Compose:
+3. Create the virtual environment
+
+```bash
+$ python3 -m venv env
+```
+
+4. Activate the Virtual Environment
+
+On Windows:
+
+```bash
+$  .\env\Scripts\activate
+```
+
+On macOS and Linux:
+
+```bash
+$  source venv/bin/activate
+```
+
+5. Install the required packages listed in requirements.txt
+
+```bash
+pip install -r requirements.txt
+```
+
+6. Start the application with Docker Compose:
 
 Make sure you have `.env` file to store your required environment variables:
 
@@ -92,6 +118,14 @@ MYSQL_ROOT_PASSWORD={MYSQL_ROOT_PASSWORD}
 MYSQL_DATABASE={MYSQL_DATABASE}
 MYSQL_USER={MYSQL_USER}
 MYSQL_PASSWORD={MYSQL_PASSWORD}
+```
+
+7. Deactivate the Virtual Environment
+
+When you're done working in the virtual environment, you can deactivate it by running:
+
+```bash
+deactivate
 ```
 
 ### Start the service
