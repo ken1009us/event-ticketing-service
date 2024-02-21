@@ -1,25 +1,27 @@
 # Event Ticketing Service
 
 ```bash
-    ______                 __     _______      __        __  _                _____                 _
-   / ____/   _____  ____  / /_   /_  __(_)____/ /_____  / /_(_)___  ____ _   / ___/___  ______   __(_)_______
-  / __/ | | / / _ \/ __ \/ __/    / / / / ___/ //_/ _ \/ __/ / __ \/ __ `/   \__ \/ _ \/ ___/ | / / / ___/ _ \
- / /___ | |/ /  __/ / / / /_     / / / / /__/ ,< /  __/ /_/ / / / / /_/ /   ___/ /  __/ /   | |/ / / /__/  __/
-/_____/ |___/\___/_/ /_/\__/    /_/ /_/\___/_/|_|\___/\__/_/_/ /_/\__, /   /____/\___/_/    |___/_/\___/\___/
+   ______                 __     _______      __        __  _
+   / ____/   _____  ____  / /_   /_  __(_)____/ /_____  / /_(_)___  ____ _
+  / __/ | | / / _ \/ __ \/ __/    / / / / ___/ //_/ _ \/ __/ / __ \/ __ `/
+ / /___ | |/ /  __/ / / / /_     / / / / /__/ ,< /  __/ /_/ / / / / /_/ /
+/_____/ |___/\___/_/ /_/\__/    /_/ /_/\___/_/|_|\___/\__/_/_/ /_/\__, /
                                                                  /____/
 
 
 --- Event Ticketing CLI ---
 1: List Events
 2: Create Event
-3: List Users
-4: Create User
-5: Create Reservation
-6: Update Reservation
-7: Delete Reservation
-8: Get User Reservations
-9: Lookup Reservation
-10: Exit
+3: Delete Event
+4: List Users
+5: Create User
+6: Delete User
+7: Create Reservation
+8: Update Reservation
+9: Delete Reservation
+10: Get User Reservations
+11: Lookup Reservation
+12: Exit
 Enter choice:
 ```
 
@@ -176,12 +178,15 @@ Then it will pop out an command line interface for you:
 --- Event Ticketing CLI ---
 1: List Events
 2: Create Event
-3: Create User
-4: Create Reservation
-5: Update Reservation
-6: Delete Reservation
-7: Get User Reservations
-8: Lookup Reservation
-9: Exit
+3: Delete Event
+4: List Users
+5: Create User
+6: Delete User
+7: Create Reservation
+8: Update Reservation
+9: Delete Reservation
+10: Get User Reservations
+11: Lookup Reservation
+12: Exit
 Enter choice:
 ```
