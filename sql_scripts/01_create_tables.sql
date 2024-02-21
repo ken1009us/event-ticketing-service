@@ -19,6 +19,6 @@ CREATE TABLE reservation (
     user_id INT NOT NULL,
     event_id INT NOT NULL,
     tickets_reserved INT NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES user(id),
-    FOREIGN KEY (event_id) REFERENCES event(id)
+    FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
+    FOREIGN KEY (event_id) REFERENCES event(id) ON DELETE CASCADE
 );
