@@ -3,6 +3,12 @@ import requests
 from pyfiglet import Figlet
 from validation.input_validation import validate_int, validate_datetime
 
+import os
+import colorama
+from colorama import Fore, Style
+
+colorama.init(autoreset=True)
+
 API_BASE_URL = "http://0.0.0.0:8000"
 
 
@@ -96,9 +102,27 @@ def list_users():
         users = response.json()
         for user in users:
             print(f"ID: {user['id']}, Name: {user['name']}")
+
     else:
         print(
             f"Failed to fetch users. Status code: {response.status_code}, Detail: {response.text}"
+        )
+
+
+def delete_user():
+    print("\n--- Delete User ---")
+    user_id_str = input("User ID: ")
+    user_id_str, user_id = validate_int(user_id_str, "User ID")
+    if not user_id_str:
+        print(user_id)
+        return
+
+    response = requests.delete(f"{API_BASE_URL}/users/{user_id}")
+    if response.status_code == 204:
+        print("User deleted successfully.")
+    else:
+        print(
+            f"Failed to delete user.  Status code: {response.status_code}, Detail: {response.text}"
         )
 
 
@@ -238,22 +262,32 @@ def delete_reservation():
         )
 
 
+def clear_screen():
+    os.system("cls" if os.name == "nt" else "clear")
+
+
+def print_heading(text):
+    f = Figlet(font="slant")
+    print(Fore.MAGENTA + f.renderText(text) + Style.RESET_ALL)
+
+
 def main_menu():
-    print("\n--- Event Ticketing CLI ---")
-    print("1: List Events")
+    print("")
+    print(Style.BRIGHT + Fore.CYAN + "--- Event Ticketing CLI ---" + Style.RESET_ALL)
+    print(Fore.GREEN + "1: List Events" + Style.RESET_ALL)
     print("2: Create Event")
     print("3: Delete Event")
     print("4: List Users")
     print("5: Create User")
-    print("6: Create Reservation")
-    print("7: Update Reservation")
-    print("8: Delete Reservation")
-    print("9: Get User Reservations")
-    print("10: Lookup Reservation")
-    print("11: Exit")
-    choice = input("Enter choice: ")
+    print("6: Delete User")
+    print("7: Create Reservation")
+    print("8: Update Reservation")
+    print("9: Delete Reservation")
+    print("10: Get User Reservations")
+    print("11: Lookup Reservation")
+    print(Fore.RED + "12: Exit" + Style.RESET_ALL)
+    choice = input(Fore.YELLOW + "Enter choice: " + Style.RESET_ALL)
     return choice
-
 
 def main():
     while True:
@@ -269,23 +303,23 @@ def main():
         elif choice == "5":
             create_user()
         elif choice == "6":
-            create_reservation()
+            delete_user()
         elif choice == "7":
-            update_reservation()
+            create_reservation()
         elif choice == "8":
-            delete_reservation()
+            update_reservation()
         elif choice == "9":
-            get_user_reservations()
+            delete_reservation()
         elif choice == "10":
-            lookup_reservation()
+            get_user_reservations()
         elif choice == "11":
-            print("Exiting...")
+            lookup_reservation()
+        elif choice == "12":
+            print(Fore.YELLOW + "Exiting..." + Style.RESET_ALL)
             break
         else:
-            print("Invalid choice, please try again.")
-
+            print(Fore.RED + "Invalid choice, please try again." + Style.RESET_ALL)
 
 if __name__ == "__main__":
-    f = Figlet(font="slant")
-    print(f.renderText("Event Ticketing Service"))
+    print_heading("Event Ticketing")
     main()
