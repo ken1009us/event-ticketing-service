@@ -51,13 +51,16 @@ async def create_user(user: User) -> User:
         user (User): The user object to be added to the database.
 
     Returns:
-        User: The created User object along with a success message.
+        tuple: A tuple indicating whether the creation was successful,
+               and a corresponding message.
     """
     async with AsyncSessionLocal() as session:
-        async with session.begin():
-            session.add(user)
-
-        return user, "User created successfully"
+        try:
+            async with session.begin():
+                session.add(user)
+            return user, "User created successfully"
+        except Exception as e:
+            return None, f"Failed to create user: {e}"
 
 
 async def delete_user(user_id: int) -> tuple[bool, str]:

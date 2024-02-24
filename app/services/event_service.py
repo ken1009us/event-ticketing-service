@@ -30,13 +30,16 @@ async def create_event(event_data: Event) -> tuple[Event, str]:
         event_data (Event): The event data to save.
 
     Returns:
-        tuple: A tuple containing the newly created Event object and a success message.
+        tuple: A tuple indicating whether the deletion was successful,
+               and a corresponding message.
     """
     async with AsyncSessionLocal() as session:
-        async with session.begin():
-            session.add(event_data)
-
-        return event_data, "Event created successfully"
+        try:
+            async with session.begin():
+                session.add(event_data)
+            return event_data, "Event created successfully"
+        except Exception as e:
+            return None, f"Failed to create event: {e}"
 
 
 async def delete_event(event_id: int) -> tuple[bool, str]:
@@ -47,19 +50,21 @@ async def delete_event(event_id: int) -> tuple[bool, str]:
         event_id (int): The unique identifier of the event to delete.
 
     Returns:
-        tuple: A tuple indicating whether the deletion was successful, and a corresponding message.
+        tuple: A tuple indicating whether the deletion was successful,
+               and a corresponding message.
     """
     async with AsyncSessionLocal() as session:
         async with session.begin():
-            reservations = await session.execute(
-                select(Reservation).where(Reservation.event_id == event_id)
-            )
-            for reservation in reservations.scalars():
-                await session.delete(reservation)
-
             event = await session.get(Event, event_id)
             if not event:
                 return False, "Event not found"
+
+            reservations = await session.execute(
+                select(Reservation).where(Reservation.event_id == event_id)
+            )
+
+            for reservation in reservations.scalars():
+                await session.delete(reservation)
 
             await session.delete(event)
 
